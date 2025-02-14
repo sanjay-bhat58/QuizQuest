@@ -13,6 +13,7 @@ export default function QuizPage() {
   const [questions] = useState(() => getRandomQuestions(QUESTION_COUNT));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isAnswering, setIsAnswering] = useState(false);
+  const [key, setKey] = useState(0); // Add a key to force timer reset
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -24,10 +25,11 @@ export default function QuizPage() {
 
   const handleAnswer = (answerIndex: number) => {
     setIsAnswering(true);
-    
+
     setTimeout(() => {
       if (answerIndex === currentQuestion.correctAnswer) {
         setCurrentQuestionIndex(prev => prev + 1);
+        setKey(prev => prev + 1); // Reset timer for next question
       } else {
         navigate("/result/fail");
       }
@@ -43,10 +45,11 @@ export default function QuizPage() {
     <div className="min-h-screen bg-gradient-to-b from-background to-primary/5 p-4">
       <div className="max-w-2xl mx-auto space-y-6 pt-8">
         <Timer 
+          key={key} // Force timer component to reset
           duration={QUESTION_DURATION}
           onTimeout={handleTimeout}
         />
-        
+
         <ProgressBar 
           current={currentQuestionIndex + 1}
           total={QUESTION_COUNT}
